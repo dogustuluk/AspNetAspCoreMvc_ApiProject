@@ -49,8 +49,8 @@ builder.Services.AddDbContext<AppDbContext>(x =>
 builder.Host.UseServiceProviderFactory
     (new AutofacServiceProviderFactory());
 builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder => containerBuilder.RegisterModule(new RepoServiceModule()));//birden fazla modül varsa bunun kopyasýný al ve module adýný deðiþtir.
-
-
+//caching
+builder.Services.AddMemoryCache();
 
 var app = builder.Build();
 
