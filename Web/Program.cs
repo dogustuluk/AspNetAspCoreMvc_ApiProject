@@ -1,8 +1,29 @@
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using Microsoft.EntityFrameworkCore;
+using Repository;
+using Service.Mapping;
+using System.Reflection;
+using Web.Modules;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+builder.Services.AddAutoMapper(typeof(MapProfile));
+//DbContext
+builder.Services.AddDbContext<AppDbContext>(x =>
+{
+    x.UseSqlServer(builder.Configuration.GetConnectionString("SqlConnection"), option =>
+    {
+        option.MigrationsAssembly(Assembly.GetAssembly(typeof(AppDbContext)).GetName().Name);//Repository class library'nin ismini aldýk çünkü AppDbContext orada.
+    });
+});
+//autoFac
+builder.Host.UseServiceProviderFactory
+    (new AutofacServiceProviderFactory());
+builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder => containerBuilder.RegisterModule(new RepoServiceModule()));//birden fazla modül varsa bunun kopyasýný al ve module adýný deðiþtir.
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
