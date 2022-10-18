@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
-{//business kod bulundurma, service katmanı yapıyor onları.
+{//business kod bulundurma, service katmanı yapıyor onları
     public class ProductsController : CustomBaseController
     {
         private readonly IMapper _mapper;

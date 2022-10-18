@@ -1,4 +1,5 @@
-﻿using Core.Services;
+﻿using API.Filters;
+using Core.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
