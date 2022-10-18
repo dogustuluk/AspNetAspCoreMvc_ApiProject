@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using API.Filters;
+using AutoMapper;
 using Core;
 using Core.DTOs;
 using Core.Services;
@@ -39,6 +40,12 @@ namespace API.Controllers
              */
             return CreateActionResult(CustomResponseDto<List<ProductDto>>.Success(200, productsDto));
         }
+        [ServiceFilter(typeof(NotFoundFilter<Product>))]
+        /*
+         * Eğer bir filter'a ya da attribute'a constructor'ında parametre geçiyorsak kapalı parantezler ile 
+           kullanamayız, bunun yerine ServiceFilter içerisinde kullanabiliriz. Controller'da hazırladığımız filter'ı
+           eklemek istersek.
+         */
         [HttpGet("{id}")]
         /*
          * eğer üstte id'yi belirtirsek metot parametresindeki id, bunu query string'ten bekler fakat burada yazarsak url üzerinden de alır. -> www.mysite.com./api/products/5 

@@ -17,6 +17,8 @@ using System.Reflection;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+//NotFoundFilter
+builder.Services.AddScoped(typeof(NotFoundFilter<>));
 //fluent validation, custom filter response
 builder.Services.AddControllers(options => options.Filters.Add(new ValidateFilterAttribute())).AddFluentValidation(x => x.RegisterValidatorsFromAssemblyContaining<ProductDtoValidator>());
 //custom filter response yaparsak (ValidateFilterAttribute gibi) aþaðýdaki kod yazýlýr. Yani fluent validator default davranýþýný pasif hale getirmeliyiz ki kendi modelimiz geriye dönsün
