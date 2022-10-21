@@ -8,6 +8,7 @@ using Service.Validations;
 using System.Reflection;
 using Web;
 using Web.Modules;
+using Web.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,6 +27,18 @@ builder.Services.AddDbContext<AppDbContext>(x =>
         option.MigrationsAssembly(Assembly.GetAssembly(typeof(AppDbContext)).GetName().Name);//Repository class library'nin ismini aldýk çünkü AppDbContext orada.
     });
 });
+
+//api services
+builder.Services.AddHttpClient<ProductApiService>(options =>
+{
+    options.BaseAddress = new Uri(builder.Configuration["BaseUrl"]);
+});
+//api services
+builder.Services.AddHttpClient<CategoryApiService>(options =>
+{
+    options.BaseAddress = new Uri(builder.Configuration["BaseUrl"]);
+});
+
 //notFoundFilter
 builder.Services.AddScoped(typeof(NotFoundFilter<>));
 //autoFac
