@@ -26,7 +26,7 @@ namespace API.Modules
             builder.RegisterAssemblyTypes(apiAssembly, repoAssembly, serviceAssembly).Where(x => x.Name.EndsWith("Repository")).AsImplementedInterfaces().InstancePerLifetimeScope();//burada assembly'lerimize git ve classların sonu "Repository" ile bitenleri al demek. InstancePerLifetimeScope bu metot addScoped'a karşılık gelir. perDependency ise Transient'e karşılık gelmektedir.
             builder.RegisterAssemblyTypes(apiAssembly, repoAssembly, serviceAssembly).Where(x => x.Name.EndsWith("Service")).AsImplementedInterfaces().InstancePerLifetimeScope();
 
-            builder.RegisterType<ProductService>().As<IProductService>();//IProductService'i gördüğünde ProductServiceWithNoCaching' in nesne örneğini alır.
+            //builder.RegisterType<ProductService>().As<IProductService>();//IProductService'i gördüğünde ProductServiceWithNoCaching' in nesne örneğini alır.
 
         }
     }

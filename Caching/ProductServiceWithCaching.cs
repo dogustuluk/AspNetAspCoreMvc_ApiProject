@@ -82,13 +82,13 @@ namespace Caching
             return Task.FromResult(product);
         }
 
-        public Task<List<ProductWithCategoryDto>> GetProductsWithCategory()
+        public Task<CustomResponseDto<List<ProductWithCategoryDto>>> GetProductsWithCategory()
         {//cache'lemede bu metot nadir kullanılıyorsa eğer direkt olarak repo'dan dönebiliriz, cache'den almasın.
             //direkt cache'den döndük ama bu metot dto ve custom response istediği için ilgili işlemleri yaptık.
             var products = _memoryCache.Get<IEnumerable<Product>>(CacheProductKey);
             var productsWithCategoryDto = _mapper.Map<List<ProductWithCategoryDto>>(products);
-            //return Task.FromResult (CustomResponseDto<List<ProductWithCategoryDto>>.Success(200, productsWithCategoryDto)); api cache
-            return Task.FromResult(productsWithCategoryDto);
+            return Task.FromResult (CustomResponseDto<List<ProductWithCategoryDto>>.Success(200, productsWithCategoryDto)); //api cache
+            //return Task.FromResult(productsWithCategoryDto); //mvc için.
         }
 
         public async Task RemoveAsync(Product entity)
