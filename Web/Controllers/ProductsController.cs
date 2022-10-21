@@ -4,31 +4,30 @@ using Core.DTOs;
 using Core.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Web.Services;
 
 namespace Web.Controllers
 {
     public class ProductsController : Controller
     {
-        private readonly IProductService _services;
-        private readonly ICategoryService _categoryService;
-        private readonly IMapper _mapper;
-        public ProductsController(IProductService services, ICategoryService categoryService, IMapper mapper)
+        private readonly ProductApiService _productApiService;
+        private readonly CategoryApiService _categoryApiService;
+
+        public ProductsController(CategoryApiService categoryApiService, ProductApiService productApiService)
         {
-            _services = services;
-            _categoryService = categoryService;
-            _mapper = mapper;
+            _categoryApiService = categoryApiService;
+            _productApiService = productApiService;
         }
 
         public async Task<IActionResult> Index()
         {
             
-            return View((await _services.GetProductsWithCategory()).Data); 
+            return View(await _productApiService.GetProductsWithCategoryAsync()); 
         }
         
         public async Task<IActionResult> Save()
         {
-            var categories = await _categoryService.GetAllAsync();
-            var categoriesDto = _mapper.Map<List<CategoryDto>>(categories.ToList());
+            var categoriesDto = await _categoryApiService.GetAllAsync();
             ViewBag.categories = new SelectList(categoriesDto, "Id", "Name");//id'yi seç, kullanıcıya name'i göster
             return View();
         }
@@ -38,14 +37,13 @@ namespace Web.Controllers
 
             if (ModelState.IsValid)
             {
-                await _services.AddAsync(_mapper.Map<Product>(productDto));
+                await _productApiService.SaveAsync(productDto);
                 return RedirectToAction(nameof(Index));
             }
             else
             {
 
-                var categories = await _categoryService.GetAllAsync();
-                var categoriesDto = _mapper.Map<List<CategoryDto>>(categories.ToList());
+                var categoriesDto = await _categoryApiService.GetAllAsync();
                 ViewBag.categories = new SelectList(categoriesDto, "Id", "Name");//id'yi seç, kullanıcıya name'i göster
                 return View();
             }
@@ -53,32 +51,29 @@ namespace Web.Controllers
         [ServiceFilter(typeof(NotFoundFilter<Product>))]
         public async Task<IActionResult> Update(int id)
         {
-            var products = await _services.GetByIdAsync(id);
+            var product = await _productApiService.GetByIdAsync(id);
             //dropdownList'i doldurmamız gerekiyor.
-            var categories = await _categoryService.GetAllAsync();
-            var categoriesDto = _mapper.Map<List<CategoryDto>>(categories.ToList());
-            ViewBag.categories = new SelectList(categoriesDto, "Id", "Name", products.CategoryId);
+            var categoriesDto = await _categoryApiService.GetAllAsync();
+            ViewBag.categories = new SelectList(categoriesDto, "Id", "Name", product.CategoryId);
 
-            return View(_mapper.Map<ProductDto>(products));
+            return View(product);
         }
         [HttpPost]
         public async Task<IActionResult> Update(ProductDto productDto )
         {
             if (ModelState.IsValid)
             {
-                await _services.UpdateAsync(_mapper.Map<Product>(productDto));
+                await _productApiService.UpdateAsync(productDto);
                 return RedirectToAction(nameof(Index));
             }
-            var categories = await _categoryService.GetAllAsync();
-            var categoriesDto = _mapper.Map<List<CategoryDto>>(categories.ToList());
+            var categoriesDto = await _categoryApiService.GetAllAsync();
             ViewBag.categories = new SelectList(categoriesDto, "Id", "Name", productDto.CategoryId);
-
+            
             return View(productDto);
         }
         public async Task<IActionResult> Remove(int id)
         {
-            var product = await _services.GetByIdAsync(id);
-            await _services.RemoveAsync(product);
+            await _productApiService.RemoveAsync(id);
             return RedirectToAction(nameof(Index));
         }
     }
