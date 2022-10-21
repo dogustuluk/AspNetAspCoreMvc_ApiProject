@@ -50,5 +50,29 @@ namespace Web.Controllers
                 return View();
             }
         }
+        public async Task<IActionResult> Update(int id)
+        {
+            var products = await _services.GetByIdAsync(id);
+            //dropdownList'i doldurmamız gerekiyor.
+            var categories = await _categoryService.GetAllAsync();
+            var categoriesDto = _mapper.Map<List<CategoryDto>>(categories.ToList());
+            ViewBag.categories = new SelectList(categoriesDto, "Id", "Name", products.CategoryId);
+
+            return View(_mapper.Map<ProductDto>(products));
+        }
+        [HttpPost]
+        public async Task<IActionResult> Update(ProductDto productDto )
+        {
+            if (ModelState.IsValid)
+            {
+                await _services.UpdateAsync(_mapper.Map<Product>(productDto));
+                return RedirectToAction(nameof(Index));
+            }
+            var categories = await _categoryService.GetAllAsync();
+            var categoriesDto = _mapper.Map<List<CategoryDto>>(categories.ToList());
+            ViewBag.categories = new SelectList(categoriesDto, "Id", "Name", productDto.CategoryId);
+
+            return View(productDto);
+        }
     }
 }
